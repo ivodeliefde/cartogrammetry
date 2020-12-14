@@ -12,7 +12,7 @@ def main():
     :return:
     """
 
-    shp_path = os.path.join(os.getcwd(), "data", "PROV1980.SHP")
+    shp_path = os.path.join(os.getcwd(), "data", "gemeente_2020_v1_small_subset.shp")
     municipalities = gpd.read_file(shp_path)
     municipalities = municipalities
     print(municipalities.head())
@@ -30,7 +30,6 @@ def main():
     cg.gdf.plot(column="GM_NAAM", ax=ax[1], alpha=0.8)
     # cg.gdf.centroid.plot(color="orange", ax=ax)
     # cg._solver.gdf.centroid.plot(color="white", ax=ax)
-    # plt.axis("off")
     plt.show()
 
 

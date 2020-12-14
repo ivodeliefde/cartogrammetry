@@ -26,3 +26,5 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+`Check out the repo on Github <https://github.com/ivodeliefde/cartogrammetry>`__
