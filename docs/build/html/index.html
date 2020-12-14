@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Cartogrammetry’s documentation! &#8212; Cartogrammetry 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-cartogrammetry-s-documentation">
+<h1>Welcome to Cartogrammetry’s documentation!<a class="headerlink" href="#welcome-to-cartogrammetry-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="module-cartogrammetry.create">
+<span id="cartogrammetry-create"></span><h1>Cartogrammetry create<a class="headerlink" href="#module-cartogrammetry.create" title="Permalink to this headline">¶</a></h1>
+<p>Module for creating a block or circle style cartogram.</p>
+<dl class="py class">
+<dt id="cartogrammetry.create.Cartogram">
+<em class="property">class </em><code class="sig-prename descclassname">cartogrammetry.create.</code><code class="sig-name descname">Cartogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gdf</span><span class="p">:</span> <span class="n">geopandas.geodataframe.GeoDataFrame</span></em>, <em class="sig-param"><span class="n">map_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">size_column</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lower_bound_mult</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">upper_bound_mult</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.create.Cartogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to create a cartogram from a geopandas geodataframe.</p>
+<dl class="py method">
+<dt id="cartogrammetry.create.Cartogram.calculate_neighbors">
+<code class="sig-name descname">calculate_neighbors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.create.Cartogram.calculate_neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cartogrammetry.create.Cartogram.calculate_size">
+<code class="sig-name descname">calculate_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.create.Cartogram.calculate_size" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cartogrammetry.create.Cartogram.create_block_map">
+<code class="sig-name descname">create_block_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.create.Cartogram.create_block_map" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cartogrammetry.create.Cartogram.create_cartogram">
+<code class="sig-name descname">create_cartogram</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.create.Cartogram.create_cartogram" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cartogrammetry.create.Cartogram.create_circle_map">
+<code class="sig-name descname">create_circle_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.create.Cartogram.create_circle_map" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="cartogrammetry.create.create_block">
+<code class="sig-prename descclassname">cartogrammetry.create.</code><code class="sig-name descname">create_block</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">row</span></em><span class="sig-paren">)</span> &#x2192; shapely.geometry.polygon.Polygon<a class="headerlink" href="#cartogrammetry.create.create_block" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cartogrammetry.create.main">
+<code class="sig-prename descclassname">cartogrammetry.create.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.create.main" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cartogrammetry.solve">
+<span id="cartogrammetry-solve"></span><h1>Cartogrammetry solve<a class="headerlink" href="#module-cartogrammetry.solve" title="Permalink to this headline">¶</a></h1>
+<p>Module for solving the location of a blocks or circles in cartogram using linear programming.</p>
+<dl class="py class">
+<dt id="cartogrammetry.solve.Solver">
+<em class="property">class </em><code class="sig-prename descclassname">cartogrammetry.solve.</code><code class="sig-name descname">Solver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gdf</span><span class="p">:</span> <span class="n">geopandas.geodataframe.GeoDataFrame</span></em>, <em class="sig-param"><span class="n">gap_size</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000.0</span></em>, <em class="sig-param"><span class="n">max_move_dist</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">10000.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.solve.Solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear Programming Solver for creating cartograms.</p>
+<p>This class solves the location of geometries in a GeoDataFrame, in order to create a cartogram. The methodology is
+derived from the article ‘Computing stable Demers cartograms’ by Nickel et al. (2019).</p>
+<dl class="py method">
+<dt id="cartogrammetry.solve.Solver.add_adjacent_variables_constraints">
+<code class="sig-name descname">add_adjacent_variables_constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.solve.Solver.add_adjacent_variables_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to create LP variables for each pair of adjacent geometries.</p>
+<dl class="simple">
+<dt>For each combination of neighboring geometries we create 2 additional variables:</dt><dd><ul class="simple">
+<li><p>h(i,j) = The non-negative horizontal distance between two squares</p></li>
+<li><p>v(i,j) = The non-negative vertical distance between two squares</p></li>
+</ul>
+</dd>
+</dl>
+<p>The distance between two squares is calculated as the sum of the width of both
+squares divided by 2.</p>
+<p>The objective is to minimize the sum of the variables h(i,j) en v(i,j). These are
+all the horizontal and vertical distances between geometries.</p>
+<dl>
+<dt>The following constraints are added:</dt><dd><p>1. The horizontal distance is greater than or equal to the smallest possible width between
+the two centerpoints (p_i and p_j) plus a gap if they are not adjacent.</p>
+<blockquote>
+<div><p>x_j - x_i &gt;= (w_j + w_i) / 2 + gap
+where gap = 0 if p_i and p_j are adjacent along the x axis</p>
+</div></blockquote>
+<p>2. The vertical distance is greater than or equal to the smallest possible height between
+the two centerpoints (p_i and p_j) plus a gap if they are not adjacent.</p>
+<blockquote>
+<div><p>y_j - y_i &gt;= (w_j + w_i) / 2 + gap
+where gap = 0 if i and j are adjacent along the y axis</p>
+</div></blockquote>
+<p>3. The horizontal distance between p_i and p_j is greater than or equal to the distance between x_i
+and x_j minus the width of both geometries.</p>
+<blockquote>
+<div><p>h(i,j) &gt;= max(x_j - x_i - w(i,j), x_i - x_j - w(i,j))</p>
+</div></blockquote>
+<p>4. The vertical distance between p_i and p_j is greater than or equal to the distance between y_i
+and y_j minus the width of both geometries.</p>
+<blockquote>
+<div><p>v(i,j) &gt;= max(y_j - y_i - w(i,j), y_i - y_j - w(i,j))</p>
+</div></blockquote>
+</dd>
+<dt>Additional remarks:</dt><dd><ul class="simple">
+<li><p>For any combination of p_i and p_j either constraint 1 or 2 must apply. Which one is used depends on</p></li>
+</ul>
+<p>which axis has the greatest range. E.g. if x_j - x_i &gt; y_j - y_i, then constraints 1 applies and p_i and
+p_j are considered horizontally adjacent.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cartogrammetry.solve.Solver.add_coord_variables">
+<code class="sig-name descname">add_coord_variables</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.solve.Solver.add_coord_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to create LP variables for each coordinate.</p>
+<dl class="simple">
+<dt>For each geometry in the GeoDataFrame we create 2 variables:</dt><dd><ul class="simple">
+<li><p>X coordinate of centerpoint</p></li>
+<li><p>Y coordinate of centerpoint</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cartogrammetry.solve.Solver.solve">
+<code class="sig-name descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.solve.Solver.solve" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Cartogrammetry</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Ivo de Liefde.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
