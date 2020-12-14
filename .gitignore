@@ -1,2 +1,6 @@
 data/
 .idea
+/build
+/doctrees
+__pycache__
+*.pyc
