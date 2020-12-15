@@ -7,7 +7,7 @@ setuptools.setup(
     version="0.0.1",
     author="Ivo de Liefde",
     author_email="ivodeliefde@gmail.com",
-    description="A Python package for creating a block or circle style cartograms.",
+    description="A Python package for creating block or circle style cartograms.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ivodeliefde/cartogrammetry",

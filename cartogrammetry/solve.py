@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 """Module for solving the location of a blocks or circles in cartogram using linear programming.
+
 """
 from shapely.geometry import Point
 import geopandas as gpd
@@ -9,10 +10,9 @@ from tqdm.auto import tqdm
 
 
 class Solver:
-    """ Linear Programming Solver for creating cartograms.
+    """Linear Programming Solver for creating cartograms.
 
-    This class solves the location of geometries in a GeoDataFrame, in order to create a cartogram. The methodology is
-    derived from the article 'Computing stable Demers cartograms' by Nickel et al. (2019).
+This class solves the location of geometries in a GeoDataFrame, in order to create a cartogram. The methodology is derived from the article 'Computing stable Demers cartograms' by Nickel et al. (2019).
 
     """
 
@@ -20,71 +20,83 @@ class Solver:
         self,
         gdf: gpd.GeoDataFrame,
         gap_size: float = 1000.0,
-        max_move_dist: float = 10000.0,
+        time_limit: int = 300
     ) -> None:
         """
 
         :param gdf:
+
         """
 
         self.gdf = gdf.copy()
         self.problem = p.LpProblem("Problem", p.LpMinimize)
         self.gap_size = gap_size
-        self.max_move_dist = max_move_dist
-        self.coord_dict = {}
+        self.time_limit = time_limit
+
+        self._coord_dict = {}
+        self._distances = []
 
         self.add_coord_variables()
         self.add_adjacent_variables_constraints()
         self.solve()
 
     def add_coord_variables(self) -> None:
-        """ Method to create LP variables for each coordinate.
+        """Method to create LP variables for each coordinate.
 
-        For each geometry in the GeoDataFrame we create 2 variables:
-            - X coordinate of centerpoint
-            - Y coordinate of centerpoint
+For each geometry in the GeoDataFrame we create 2 variables:
+
+    - X coordinate of centerpoint
+    - Y coordinate of centerpoint
 
         :return:
+
         """
         for i in range(self.gdf.shape[0]):
-            self.coord_dict[i] = {}
-            self.coord_dict[i]["x"] = p.LpVariable(f"x_{i}", lowBound=0)
-            self.coord_dict[i]["y"] = p.LpVariable(f"y_{i}", lowBound=0)
+            self._coord_dict[i] = {}
+            self._coord_dict[i]["x"] = p.LpVariable(f"x_{i}")
+            self._coord_dict[i]["y"] = p.LpVariable(f"y_{i}")
+
+        self.problem += self._coord_dict[i]["x"] >= 0
+        self.problem += self._coord_dict[i]["y"] >= 0
 
     def add_adjacent_variables_constraints(self) -> None:
-        """ Method to create LP variables for each pair of adjacent geometries.
+        """Method to create LP variables for each pair of adjacent geometries.
 
-        For each combination of neighboring geometries we create 2 additional variables:
-            - h(i,j) = The non-negative horizontal distance between two squares
-            - v(i,j) = The non-negative vertical distance between two squares
-        The distance between two squares is calculated as the sum of the width of both
-        squares divided by 2.
+For each combination of neighboring geometries we create 2 additional variables:
 
-        The objective is to minimize the sum of the variables h(i,j) en v(i,j). These are
-        all the horizontal and vertical distances between geometries.
+    - h(i,j) = The non-negative horizontal distance between two squares
+    - v(i,j) = The non-negative vertical distance between two squares
 
-        The following constraints are added:
-            1. The horizontal distance is greater than or equal to the smallest possible width between
-            the two centerpoints (p_i and p_j) plus a gap if they are not adjacent.
-                x_j - x_i >= (w_j + w_i) / 2 + gap
-                where gap = 0 if p_i and p_j are adjacent along the x axis
-            2. The vertical distance is greater than or equal to the smallest possible height between
-            the two centerpoints (p_i and p_j) plus a gap if they are not adjacent.
-                y_j - y_i >= (w_j + w_i) / 2 + gap
-                where gap = 0 if i and j are adjacent along the y axis
-            3. The horizontal distance between p_i and p_j is greater than or equal to the distance between x_i
-            and x_j minus the width of both geometries.
-                h(i,j) >= max(x_j - x_i - w(i,j), x_i - x_j - w(i,j))
-            4. The vertical distance between p_i and p_j is greater than or equal to the distance between y_i
-            and y_j minus the width of both geometries.
-                v(i,j) >= max(y_j - y_i - w(i,j), y_i - y_j - w(i,j))
+The distance between two squares is calculated as the sum of the width of both squares divided by 2.
 
-        Additional remarks:
-            - For any combination of p_i and p_j either constraint 1 or 2 must apply. Which one is used depends on
-            which axis has the greatest range. E.g. if x_j - x_i > y_j - y_i, then constraints 1 applies and p_i and
-            p_j are considered horizontally adjacent.
+The objective is to minimize the sum of the variables h(i,j) en v(i,j). These are all the horizontal and vertical distances between geometries.
 
-        :return:
+The following constraints are added:
+
+    1. The horizontal distance is greater than or equal to the smallest possible width between the two centerpoints (p_i and p_j) plus a gap if they are not adjacent.
+
+        x_j - x_i >= (w_j + w_i) / 2 + gap
+
+        where gap = 0 if p_i and p_j are adjacent along the x axis
+    2. The vertical distance is greater than or equal to the smallest possible height between the two centerpoints (p_i and p_j) plus a gap if they are not adjacent.
+
+        y_j - y_i >= (w_j + w_i) / 2 + gap
+
+        where gap = 0 if i and j are adjacent along the y axis
+    3. The horizontal distance between p_i and p_j is greater than or equal to the distance between x_i and x_j minus the width of both geometries.
+
+        h(i,j) >= max(x_j - x_i - w(i,j), x_i - x_j - w(i,j))
+
+    4. The vertical distance between p_i and p_j is greater than or equal to the distance between y_i and y_j minus the width of both geometries.
+
+        v(i,j) >= max(y_j - y_i - w(i,j), y_i - y_j - w(i,j))
+
+Additional remarks:
+
+    - For any combination of p_i and p_j either constraint 1 or 2 must apply. Which one is used depends on which axis has the greatest range. E.g. if x_j - x_i > y_j - y_i, then constraints 1 applies and p_i and p_j are considered horizontally adjacent.
+
+    :return:
+
         """
         combinations = set()
 
@@ -102,20 +114,25 @@ class Solver:
 
         for i, j in combinations:
             # Create the variables for the optimal horizontal en vertical length between p_i en p_j
-            h = p.LpVariable(f"h_{i}_{j}", lowBound=0)
-            v = p.LpVariable(f"v_{i}_{j}", lowBound=0)
+            h = p.LpVariable(f"h_{i}_{j}")
+            v = p.LpVariable(f"v_{i}_{j}")
+            self.problem += h >= 0
+            self.problem += v >= 0
 
-            # Define the objective
-            self.problem += h + v
+            self._distances.append(h)
+            self._distances.append(v)
 
             # Calculate the minimum length between i en j based on their width
             w = self.gdf.at[i, "geom_size"] + self.gdf.at[j, "geom_size"]
 
             # Add a gap if they are non-adjacent
+            # print(j, self.gdf.iloc[i, :]["_neighbors"])
             if str(j) in self.gdf.iloc[i, :]["_neighbors"].split(","):
                 gap = 0
+                # print("no gap:", self.gdf.at[i, "name"], "-", self.gdf.at[j, "name"])
             else:
                 gap = self.gap_size
+                # print("gap:", self.gdf.at[i, "name"], "-", self.gdf.at[j, "name"])
 
             # Check whether the neighbors should be connected horizontally or vertically.
             geom_dist_x = self.gdf.at[j, "geometry"].x - self.gdf.at[i, "geometry"].x
@@ -124,24 +141,26 @@ class Solver:
             # Depending on whether x_i - x_j yields a positive or negative result we decide the order
             # in which they are presented in the constraints.
             if geom_dist_x > 0:
+                # print("a", self.gdf.at[i, "name"], i, self.gdf.at[j, "name"], j, geom_dist_x, geom_dist_y, w, gap)
                 if abs(geom_dist_x) > abs(geom_dist_y):
                     # Add constraint 1
                     self.problem += (
-                        self.coord_dict[j]["x"] - self.coord_dict[i]["x"] >= w + gap
+                        self._coord_dict[j]["x"] - self._coord_dict[i]["x"] >= w + gap
                     )
                 # Add constraint 3
                 self.problem += (
-                    h >= self.coord_dict[j]["x"] - self.coord_dict[i]["x"] - w
+                    h >= self._coord_dict[j]["x"] - self._coord_dict[i]["x"] - w
                 )
             else:
+                # print("b", self.gdf.at[i, "name"], i, self.gdf.at[j, "name"], j, geom_dist_x, geom_dist_y, w, gap)
                 if abs(geom_dist_x) > abs(geom_dist_y):
                     # Add constraint 1
                     self.problem += (
-                        self.coord_dict[i]["x"] - self.coord_dict[j]["x"] >= w + gap
+                        self._coord_dict[i]["x"] - self._coord_dict[j]["x"] >= w + gap
                     )
                 # Add constraint 3
                 self.problem += (
-                    h >= self.coord_dict[i]["x"] - self.coord_dict[j]["x"] - w
+                    h >= self._coord_dict[i]["x"] - self._coord_dict[j]["x"] - w
                 )
 
             # Depending on whether y_i - y_j yields a positive or negative result we decide the order
@@ -150,30 +169,32 @@ class Solver:
                 if not abs(geom_dist_x) > abs(geom_dist_y):
                     # Add constraint 2
                     self.problem += (
-                        self.coord_dict[j]["y"] - self.coord_dict[i]["y"] >= w + gap
+                        self._coord_dict[j]["y"] - self._coord_dict[i]["y"] >= w + gap
                     )
                 # Add constraint 4
                 self.problem += (
-                    v >= self.coord_dict[j]["y"] - self.coord_dict[i]["y"] - w
+                    v >= self._coord_dict[j]["y"] - self._coord_dict[i]["y"] - w
                 )
             else:
                 if not abs(geom_dist_x) > abs(geom_dist_y):
                     # Add constraint 2
                     self.problem += (
-                        self.coord_dict[i]["y"] - self.coord_dict[j]["y"] >= w + gap
+                        self._coord_dict[i]["y"] - self._coord_dict[j]["y"] >= w + gap
                     )
                 # Add constraint 4
                 self.problem += (
-                    v >= self.coord_dict[i]["y"] - self.coord_dict[j]["y"] - w
+                    v >= self._coord_dict[i]["y"] - self._coord_dict[j]["y"] - w
                 )
 
-    def solve(self):
+        # Define the objective
+        self.problem += p.lpSum(self._distances)
+
+    def solve(self) -> None:
+        """Method to solve for the optimal location of geometries given an input Geodataframe with a size column.
+
         """
 
-        :return:
-        """
-
-        self.problem.solve()
+        self.problem.solve(p.GLPK_CMD(msg=True, options=["--tmlim", f"{self.time_limit}"]))
 
         for v in self.problem.variables():
             var_name = v.name.split("_")
