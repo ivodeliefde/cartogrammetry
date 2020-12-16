@@ -1,55 +1,68 @@
 import sys
 import os
+import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from cartogrammetry.create import Cartogram
-from cartogrammetry.solve import Solver
 
 
 def main():
+    """US state population example
+
     """
 
-    :return:
-    """
+    # Load the sample dataset: the US states and their corresponding population number.
+    # (data from https://www.census.gov/)
+    us_states_path = os.path.join(os.getcwd(), "sample_data", "cb_2018_us_state_5m.shp")
+    us_pop_path = os.path.join(os.getcwd(), "sample_data", "nst-est2019-01.xlsx")
+    us_states = gpd.read_file(us_states_path)
+    us_inhab = pd.read_excel(us_pop_path, skiprows=3, engine="openpyxl").add_prefix(
+        "pop_"
+    )
+    # Tidy up rows and column names
+    us_inhab.rename(columns={us_inhab.columns[0]: "NAME"}, inplace=True)
+    us_inhab.NAME = us_inhab.NAME.str.replace(".", "")
+    # Join population numbers and us state geometries.
+    us_states = us_states.merge(us_inhab, on="NAME")
+    print(us_states.info())
 
-    shp_path = os.path.join(os.getcwd(), "data", "NLD_provinces.geojson")
-    # shp_path = os.path.join(os.getcwd(), "data", "gemeente_2020_v1_small_subset.shp")
-    municipalities = gpd.read_file(shp_path)
-    # municipalities = municipalities.loc[municipalities.geometry.centroid.y > municipalities.geometry.centroid.y.mean(), :].loc[municipalities.H2O.str.contains("NEE"), :].reset_index()
-
+    # Create a block style cartogram for inhabitants per state in 2019.
     cg = Cartogram(
         map_type="block",
-        gdf=municipalities,
-        size_column="AANT_INW",
-        lower_bound_mult=1,
-        upper_bound_mult=1,
+        gdf=us_states,
+        size_column="pop_2019",
+        mode=3,
+        time_limit=15000,
     )
 
-    # print(cg._solver.gdf.bounds.describe())
-    # print(cg._solver.gdf.geometry.head(12))
-    # print(cg.gdf.geometry.head(12))
-    # cg._solver.gdf.geometry.to_file("data/provinces_result.shp")
-
-    f, ax = plt.subplots(1, 2, figsize=(15, 15))
-    # # cg.gdf["_n_neighbors"] = cg._solver.gdf._n_neighbors
-    cg._solver.gdf.plot(
-        # column="GM_NAAM",
-        column="name",
-        ax=ax[0],
-        alpha=0.8
+    # Plot both the original map and the cartogram side by side.
+    f, ax = plt.subplots(2, 1, figsize=(10, 25))
+    cg._solver.gdf.plot(column="pop_2019", ax=ax[0], alpha=0.8)
+    cg.gdf.plot(column="pop_2019", ax=ax[1], alpha=0.8)
+    ax[0].axis("off")
+    ax[1].axis("off")
+    cg._solver.gdf.apply(
+        lambda x: ax[0].annotate(
+            text=x.STUSPS,
+            xy=x.geometry.centroid.coords[0],
+            ha="center",
+            color="#B2B2B2",
+        ),
+        axis=1,
     )
-    # cg._solver.gdf.centroid.plot(ax=ax[0], alpha=0.8)
-    cg.gdf.plot(
-        # column="GM_NAAM",
-        column="name",
-        ax=ax[1],
-        alpha=0.8
+    cg.gdf.apply(
+        lambda x: ax[1].annotate(
+            text=x.STUSPS,
+            xy=x.geometry.centroid.coords[0],
+            ha="center",
+            color="#B2B2B2",
+        ),
+        axis=1,
     )
-    # # cg.gdf.centroid.plot(color="orange", ax=ax)
-    # # cg._solver.gdf.centroid.plot(color="white", ax=ax)
-    ax[0].axis('off')
-    ax[1].axis('off')
+    ax[1].set_xlim(-21000000, -5000000)
     plt.show()
+
+    print(cg._scaler.get_params()["feature_range"])
 
 
 if __name__ == "__main__":

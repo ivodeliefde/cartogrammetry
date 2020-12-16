@@ -1,0 +1,25 @@
+Metadata-Version: 2.1
+Name: cartogrammetry
+Version: 0.0.1
+Summary: A Python package for creating block or circle style cartograms.
+Home-page: https://github.com/ivodeliefde/cartogrammetry
+Author: Ivo de Liefde
+Author-email: ivodeliefde@gmail.com
+License: UNKNOWN
+Description: # Cartogrammetry
+        
+        A Python package for creating block or circle style cartograms.
+        
+        ![img1](https://github.com/ivodeliefde/cartogrammetry/blob/master/imgs/cartogram_example_1.PNG?raw=true)
+        
+        ![img2](https://github.com/ivodeliefde/cartogrammetry/blob/master/imgs/cartogram_example_2.PNG?raw=true)
+        
+        ## Documentation
+        
+        Check out the documentation [here](https://ivodeliefde.github.io/cartogrammetry/).
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
