@@ -2,3 +2,6 @@
 
 """Init script
 """
+
+from .create import Cartogram, create_block
+from .solve import Solver

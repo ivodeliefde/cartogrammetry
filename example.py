@@ -24,6 +24,7 @@ def main():
     us_inhab.NAME = us_inhab.NAME.str.replace(".", "")
     # Join population numbers and us state geometries.
     us_states = us_states.merge(us_inhab, on="NAME")
+
     print(us_states.info())
 
     # Create a block style cartogram for inhabitants per state in 2019.
@@ -31,14 +32,19 @@ def main():
         map_type="block",
         gdf=us_states,
         size_column="pop_2019",
-        mode=3,
-        time_limit=15000,
+        mode=2,
+        time_limit=480, # The total amount of seconds the model is allowed to run. Useful for working with mode 3.
+        lower_bound_mult=1
     )
 
     # Plot both the original map and the cartogram side by side.
-    f, ax = plt.subplots(2, 1, figsize=(10, 25))
-    cg._solver.gdf.plot(column="pop_2019", ax=ax[0], alpha=0.8)
-    cg.gdf.plot(column="pop_2019", ax=ax[1], alpha=0.8)
+    f, ax = plt.subplots(1, 2, figsize=(10, 25))
+    cg._solver.gdf.plot(
+        column="pop_2019",
+        ax=ax[0], alpha=0.8)
+    cg.gdf.plot(
+        column="pop_2019",
+        ax=ax[1], alpha=0.8)
     ax[0].axis("off")
     ax[1].axis("off")
     cg._solver.gdf.apply(
@@ -61,8 +67,6 @@ def main():
     )
     ax[1].set_xlim(-21000000, -5000000)
     plt.show()
-
-    print(cg._scaler.get_params()["feature_range"])
 
 
 if __name__ == "__main__":

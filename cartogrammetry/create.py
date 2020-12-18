@@ -54,9 +54,16 @@ class Cartogram:
         mode: int = 1,
         time_limit: int = 300,
     ) -> None:
-        """Init method.
+        """
 
-        :return: None
+        :param gdf:
+        :param map_type:
+        :param size_column:
+        :param lower_bound_mult:
+        :param upper_bound_mult:
+        :param normalize:
+        :param mode:
+        :param time_limit:
         """
         self.map_type = map_type
         self.gdf = gdf.to_crs(3857)
@@ -67,8 +74,8 @@ class Cartogram:
         self.mode = mode
         self.time_limit = time_limit
 
-        self._lower_bound = 0
-        self._upper_bound = 1
+        self._lower_bound = 1
+        self._upper_bound = 10
         self._scaler = None
         self._solver = None
         self._x_offset = -1.0 * self.gdf.bounds.minx.min()
@@ -126,8 +133,8 @@ class Cartogram:
         """
 
         # Take a lower and upper bound based on the areas and apply the multiplier
-        self._lower_bound = 0.1
-        self._upper_bound = 1
+        self._lower_bound = self._lower_bound * self.lower_bound_mult
+        self._upper_bound = np.sqrt(self._lower_bound * (self.gdf.loc[:, self.size_column].max() / self.gdf.loc[:, self.size_column].min()) * self.upper_bound_mult) / 2
 
         # Create a scaler and calculate a size value based on the size_column
         self._scaler = MinMaxScaler(
@@ -139,8 +146,6 @@ class Cartogram:
                 self._scaler.fit_transform(
                     self.gdf.loc[:, self.size_column].values.reshape(-1, 1)
                 )
-                * np.sqrt(self.gdf.geometry.area.max())
-                / 2
             )
         else:
             # TODO! check if geometry type is polygon
@@ -164,8 +169,6 @@ class Cartogram:
             self.gdf.at[index, "_neighbors"] = ",".join(
                 [str(n) for n in neighbors if n != index]
             )
-            # for n in self.gdf.at[index, "_neighbors"].split(","):
-            #     print(index, self.gdf.at[index, "name"], n, self.gdf.at[int(n), "name"])
             self.gdf.at[index, "_n_neighbors"] = len(neighbors)
 
         self.gdf["_n_neighbors"].fillna(0, inplace=True)
@@ -187,30 +190,3 @@ class Cartogram:
             create_block, axis=1
         )
 
-
-def main():
-    """Main function for testing purposes
-
-    """
-
-    shp_path = os.path.join(Path(os.getcwd()).parent, "data", "gemeente_2020_v1.shp")
-    municipalities = gpd.read_file(shp_path)
-    municipalities = municipalities.loc[municipalities.H2O.str.contains("NEE"), :]
-    # municipalities.plot(column="GM_NAAM")
-    # plt.axis("off")
-    # plt.show()
-    print(municipalities.info())
-    cg = Cartogram(
-        map_type="block",
-        gdf=municipalities,
-        size_column="AANT_INW",
-        lower_bound_mult=1,
-        upper_bound_mult=1,
-    )
-    cg.gdf.plot(column="geom_size")
-    plt.axis("off")
-    plt.show()
-
-
-if __name__ == "__main__":
-    sys.exit(main())
