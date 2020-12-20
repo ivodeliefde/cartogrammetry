@@ -1,8 +1,9 @@
-data/
+/data/
 .idea/
-docs/build/
+/docs/build/
 __pycache__
 *.pyc
-cartogrammetry.egg-info/
-dist/
+/dist/
 scrap.py
+/cartogrammetry.egg-info/
+
