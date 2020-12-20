@@ -3,8 +3,7 @@ import os
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
-from cartogrammetry.create import Cartogram
-
+from cartogrammetry.create import CircleCartogram, BlockCartogram
 
 def main():
     """US state population example
@@ -24,18 +23,20 @@ def main():
     us_inhab.NAME = us_inhab.NAME.str.replace(".", "")
     # Join population numbers and us state geometries.
     us_states = us_states.merge(us_inhab, on="NAME")
-
+    # Inspect the data
     print(us_states.info())
 
-    # Create a block style cartogram for inhabitants per state in 2019.
-    cg = Cartogram(
-        map_type="block",
+    # Initialize a circle style cartogram for inhabitants per state in 2019.
+    cg = CircleCartogram(
         gdf=us_states,
         size_column="pop_2019",
         mode=2,
         time_limit=480, # The total amount of seconds the model is allowed to run. Useful for working with mode 3.
         lower_bound_mult=1
     )
+
+    # Calculate the cartogram geometries.
+    cg.calculate()
 
     # Plot both the original map and the cartogram side by side.
     f, ax = plt.subplots(1, 2, figsize=(10, 25))
@@ -52,6 +53,7 @@ def main():
             text=x.STUSPS,
             xy=x.geometry.centroid.coords[0],
             ha="center",
+            va="center",
             color="#B2B2B2",
         ),
         axis=1,
@@ -61,6 +63,7 @@ def main():
             text=x.STUSPS,
             xy=x.geometry.centroid.coords[0],
             ha="center",
+            va="center",
             color="#B2B2B2",
         ),
         axis=1,
