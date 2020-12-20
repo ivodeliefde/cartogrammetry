@@ -2,19 +2,11 @@
 
 """Module for creating block or circle style cartograms.
 """
-import sys
-import os
-from pathlib import Path
-import numpy as np
-import pandas as pd
-import geopandas as gpd
-from shapely.geometry import Polygon
-from shapely.affinity import translate
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
-from tqdm.auto import tqdm
 
-from ._cartogram import Cartogram
+import pandas as pd
+from shapely.geometry import Polygon
+
+from .cartogram import Cartogram
 
 
 def create_block(row: pd.Series) -> Polygon:
@@ -31,8 +23,11 @@ def create_block(row: pd.Series) -> Polygon:
 
 
 class CircleCartogram(Cartogram):
+    """Extends the Cartogram class to create a cartogram where every geometry is represented as a circle.
+
+    """
     def calculate(self) -> None:
-        """Create a cartogram where every geometry is represented as a circle.
+        """
 
         """
         self.solve_cartogram()
@@ -40,14 +35,16 @@ class CircleCartogram(Cartogram):
             self._solver.gdf["geom_size"]
         )
 
-class BlockCartogram(Cartogram):
+
+class SquareCartogram(Cartogram):
+    """Extends the Cartogram class to create a cartogram where every geometry is represented as a square.
+
+    """
     def calculate(self) -> None:
-        """Create a cartogram where every geometry is represented as a block.
+        """
 
         """
         self.solve_cartogram()
         self._solver.gdf.geometry = self._solver.gdf[["geometry", "geom_size"]].apply(
             create_block, axis=1
         )
-
-

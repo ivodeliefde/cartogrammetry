@@ -84,6 +84,7 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">Cartogrammetry </a></li>
 <li><a class="reference internal" href="#module-cartogrammetry.create">create</a></li>
+<li><a class="reference internal" href="#module-cartogrammetry.cartogram">cartogram</a></li>
 <li><a class="reference internal" href="#module-cartogrammetry.solve">solve</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
@@ -160,57 +161,24 @@
 <span id="create"></span><h1>create<a class="headerlink" href="#module-cartogrammetry.create" title="Permalink to this headline">¶</a></h1>
 <p>Module for creating block or circle style cartograms.</p>
 <dl class="py class">
-<dt id="cartogrammetry.create.Cartogram">
-<em class="property">class </em><code class="sig-prename descclassname">cartogrammetry.create.</code><code class="sig-name descname">Cartogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gdf</span><span class="p">:</span> <span class="n">geopandas.geodataframe.GeoDataFrame</span></em>, <em class="sig-param"><span class="n">map_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">size_column</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lower_bound_mult</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">upper_bound_mult</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">time_limit</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">300</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.create.Cartogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class to create a cartogram from a geopandas geodataframe.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf</strong> – GeoDataFrame with polygon features to create a cartogram from.</p></li>
-<li><p><strong>map_type</strong> – Type of cartogram, either ‘block’ or ‘circle’.</p></li>
-<li><p><strong>size_column</strong> – Numeric dataframe column to use for scaling the cartogram.</p></li>
-<li><p><strong>lower_bound_mult</strong> – multiplier to affect the lower bound for scaling the cartogram.</p></li>
-<li><p><strong>upper_bound_mult</strong> – multiplier to affect the upper bound for scaling the cartogram.</p></li>
-<li><p><strong>normalize</strong> – Boolean value, if true the values in the size_column are divided by the area of the input geometry.</p></li>
-<li><p><strong>time_limit</strong> – The maximum time allowed to find a solution. If exceeded the best solution at that time is returned.</p></li>
-<li><p><strong>mode</strong> – Mode 1, 2 or 3. Corresponds to 1: quick method but suboptimal, 2: quick, optimal, but with overlapping geometries, 3: optimal, no overlapping geometries, but slow.</p></li>
-</ul>
-</dd>
-</dl>
+<dt id="cartogrammetry.create.CircleCartogram">
+<em class="property">class </em><code class="sig-prename descclassname">cartogrammetry.create.</code><code class="sig-name descname">CircleCartogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gdf</span><span class="p">:</span> <span class="n">geopandas.geodataframe.GeoDataFrame</span></em>, <em class="sig-param"><span class="n">size_column</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lower_bound_mult</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">upper_bound_mult</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">time_limit</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">300</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.create.CircleCartogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends the Cartogram class to create a cartogram where every geometry is represented as a circle.</p>
 <dl class="py method">
-<dt id="cartogrammetry.create.Cartogram.calculate_neighbors">
-<code class="sig-name descname">calculate_neighbors</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.create.Cartogram.calculate_neighbors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate which geometries are adjacent to each other.</p>
+<dt id="cartogrammetry.create.CircleCartogram.calculate">
+<code class="sig-name descname">calculate</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.create.CircleCartogram.calculate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
+<dl class="py class">
+<dt id="cartogrammetry.create.SquareCartogram">
+<em class="property">class </em><code class="sig-prename descclassname">cartogrammetry.create.</code><code class="sig-name descname">SquareCartogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gdf</span><span class="p">:</span> <span class="n">geopandas.geodataframe.GeoDataFrame</span></em>, <em class="sig-param"><span class="n">size_column</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lower_bound_mult</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">upper_bound_mult</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">time_limit</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">300</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.create.SquareCartogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends the Cartogram class to create a cartogram where every geometry is represented as a square.</p>
 <dl class="py method">
-<dt id="cartogrammetry.create.Cartogram.calculate_size">
-<code class="sig-name descname">calculate_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.create.Cartogram.calculate_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the size for each geometry based on a numeric column.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="cartogrammetry.create.Cartogram.create_block_map">
-<code class="sig-name descname">create_block_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.create.Cartogram.create_block_map" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a cartogram where every geometry is represented as a block.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="cartogrammetry.create.Cartogram.create_cartogram">
-<code class="sig-name descname">create_cartogram</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.create.Cartogram.create_cartogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method for running all the steps required to make a cartogram.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="cartogrammetry.create.Cartogram.create_circle_map">
-<code class="sig-name descname">create_circle_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.create.Cartogram.create_circle_map" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a cartogram where every geometry is represented as a circle.</p>
-</dd></dl>
+<dt id="cartogrammetry.create.SquareCartogram.calculate">
+<code class="sig-name descname">calculate</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.create.SquareCartogram.calculate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -226,12 +194,53 @@
 </dd></dl>
 
 </div>
+<div class="section" id="module-cartogrammetry.cartogram">
+<span id="cartogram"></span><h1>cartogram<a class="headerlink" href="#module-cartogrammetry.cartogram" title="Permalink to this headline">¶</a></h1>
+<p>Module for creating block or circle style cartograms.</p>
+<dl class="py class">
+<dt id="cartogrammetry.cartogram.Cartogram">
+<em class="property">class </em><code class="sig-prename descclassname">cartogrammetry.cartogram.</code><code class="sig-name descname">Cartogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gdf</span><span class="p">:</span> <span class="n">geopandas.geodataframe.GeoDataFrame</span></em>, <em class="sig-param"><span class="n">size_column</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lower_bound_mult</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">upper_bound_mult</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">time_limit</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">300</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.cartogram.Cartogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to create a cartogram from a geopandas geodataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gdf</strong> – GeoDataFrame with polygon features to create a cartogram from.</p></li>
+<li><p><strong>size_column</strong> – Numeric dataframe column to use for scaling the cartogram.</p></li>
+<li><p><strong>lower_bound_mult</strong> – multiplier to affect the lower bound for scaling the cartogram.</p></li>
+<li><p><strong>upper_bound_mult</strong> – multiplier to affect the upper bound for scaling the cartogram.</p></li>
+<li><p><strong>normalize</strong> – Boolean value, if true the values in the size_column are divided by the area of the input geometry.</p></li>
+<li><p><strong>time_limit</strong> – The maximum time allowed to find a solution. If exceeded the best solution at that time is returned.</p></li>
+<li><p><strong>mode</strong> – Mode 1, 2 or 3. Corresponds to 1: quick method but suboptimal, 2: quick, optimal, but with overlapping geometries, 3: optimal, no overlapping geometries, but slow.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="cartogrammetry.cartogram.Cartogram.calculate_neighbors">
+<code class="sig-name descname">calculate_neighbors</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.cartogram.Cartogram.calculate_neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate which geometries are adjacent to each other.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cartogrammetry.cartogram.Cartogram.calculate_size">
+<code class="sig-name descname">calculate_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.cartogram.Cartogram.calculate_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the size for each geometry based on a numeric column.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cartogrammetry.cartogram.Cartogram.solve_cartogram">
+<code class="sig-name descname">solve_cartogram</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.cartogram.Cartogram.solve_cartogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method for running all the steps required to make a cartogram.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-cartogrammetry.solve">
 <span id="solve"></span><h1>solve<a class="headerlink" href="#module-cartogrammetry.solve" title="Permalink to this headline">¶</a></h1>
 <p>Module for solving the location of a blocks or circles in cartogram using linear programming.</p>
 <dl class="py class">
 <dt id="cartogrammetry.solve.Solver">
-<em class="property">class </em><code class="sig-prename descclassname">cartogrammetry.solve.</code><code class="sig-name descname">Solver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gdf</span><span class="p">:</span> <span class="n">geopandas.geodataframe.GeoDataFrame</span></em>, <em class="sig-param"><span class="n">gap_size</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">time_limit</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">300</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.solve.Solver" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cartogrammetry.solve.</code><code class="sig-name descname">Solver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gdf</span><span class="p">:</span> <span class="n">geopandas.geodataframe.GeoDataFrame</span></em>, <em class="sig-param"><span class="n">gap_size</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">time_limit</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">300</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">solve_msg</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.solve.Solver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear Programming Solver for creating cartograms.</p>
 <p>This class solves the location of geometries in a GeoDataFrame, in order to create a cartogram. The methodology is derived from the article ‘Computing stable Demers cartograms’ by Nickel et al. (2019).</p>
 <dl class="field-list simple">
@@ -241,6 +250,7 @@
 <li><p><strong>gap_size</strong> – The minimum length in meters between non-adjacent geometries.</p></li>
 <li><p><strong>time_limit</strong> – The maximum time allowed to find a solution. If exceeded the best solution at that time is returned.</p></li>
 <li><p><strong>mode</strong> – Mode 1, 2 or 3. Corresponds to 1: quick method but suboptimal, 2: quick, optimal, but with overlapping geometries, 3: optimal, no overlapping geometries, but slow.</p></li>
+<li><p><strong>solve_msg</strong> – Boolean value for displaying solver logging.</p></li>
 </ul>
 </dd>
 </dl>
@@ -289,10 +299,6 @@
 <div><ul class="simple">
 <li><p>For any combination of p_i and p_j either constraint 1 or 2 must apply. Which one is used depends on which axis has the greatest range. E.g. if x_j - x_i &gt; y_j - y_i, then constraints 1 applies and p_i and p_j are considered horizontally adjacent.</p></li>
 </ul>
-<dl class="field-list simple">
-<dt class="field-odd">return</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
 </div></blockquote>
 </dd></dl>
 
@@ -302,16 +308,9 @@
 <dd><p>Method to create LP variables for each coordinate.</p>
 <p>For each geometry in the GeoDataFrame we create 2 variables:</p>
 <blockquote>
-<div><ul>
+<div><ul class="simple">
 <li><p>X coordinate of centerpoint</p></li>
-<li><p>Y coordinate of centerpoint</p>
-<blockquote>
-<div><dl class="field-list simple">
-<dt class="field-odd">return</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</div></blockquote>
-</li>
+<li><p>Y coordinate of centerpoint</p></li>
 </ul>
 </div></blockquote>
 </dd></dl>
@@ -319,11 +318,7 @@
 <dl class="py method">
 <dt id="cartogrammetry.solve.Solver.run">
 <code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.solve.Solver.run" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-</dl>
+<dd><p>Methode to run all required steps to find the optimal centerpoint locations for each geometry in a cartogram.</p>
 </dd></dl>
 
 <dl class="py method">

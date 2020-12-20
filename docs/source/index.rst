@@ -15,6 +15,11 @@ create
 .. automodule:: cartogrammetry.create
    :members:
 
+cartogram
+=====================
+.. automodule:: cartogrammetry.cartogram
+   :members:
+
 solve
 =====================
 .. automodule:: cartogrammetry.solve

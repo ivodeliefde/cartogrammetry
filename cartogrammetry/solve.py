@@ -3,7 +3,6 @@
 """Module for solving the location of a blocks or circles in cartogram using linear programming.
 
 """
-import logging
 from shapely.geometry import Point
 import geopandas as gpd
 import pulp as p
@@ -19,6 +18,7 @@ class Solver:
     :param gap_size: The minimum length in meters between non-adjacent geometries.
     :param time_limit: The maximum time allowed to find a solution. If exceeded the best solution at that time is returned.
     :param mode: Mode 1, 2 or 3. Corresponds to 1: quick method but suboptimal, 2: quick, optimal, but with overlapping geometries, 3: optimal, no overlapping geometries, but slow.
+    :param solve_msg: Boolean value for displaying solver logging.
     """
 
     def __init__(
@@ -27,6 +27,7 @@ class Solver:
         gap_size: float = 0.5,
         time_limit: int = 300,
         mode: int = 1,
+        solve_msg: bool = True,
     ) -> None:
         """
 
@@ -34,6 +35,7 @@ class Solver:
         :param gap_size:
         :param time_limit:
         :param mode:
+        :param solve_msg:
         """
 
         self.gdf = gdf.copy()
@@ -41,14 +43,14 @@ class Solver:
         self.gap_size = gap_size
         self.time_limit = time_limit
         self.mode = mode
+        self.solve_msg = solve_msg
 
         self._coord_dict = {}
         self._distances = []
 
     def run(self) -> None:
-        """
+        """Methode to run all required steps to find the optimal centerpoint locations for each geometry in a cartogram.
 
-        :return:
         """
         self.add_coord_variables()
         self.add_adjacent_variables_constraints()
@@ -62,7 +64,6 @@ For each geometry in the GeoDataFrame we create 2 variables:
     - X coordinate of centerpoint
     - Y coordinate of centerpoint
 
-        :return:
         """
         for i in range(self.gdf.shape[0]):
             self._coord_dict[i] = {}
@@ -113,7 +114,6 @@ Additional remarks:
 
     - For any combination of p_i and p_j either constraint 1 or 2 must apply. Which one is used depends on which axis has the greatest range. E.g. if x_j - x_i > y_j - y_i, then constraints 1 applies and p_i and p_j are considered horizontally adjacent.
 
-    :return:
         """
         combinations = set()
 
@@ -136,13 +136,10 @@ Additional remarks:
             self.problem += h >= 0
             self.problem += v >= 0
 
-
-
             # Calculate the minimum length between i en j based on their width
             w = self.gdf.at[i, "geom_size"] + self.gdf.at[j, "geom_size"]
 
             # Add a gap if they are non-adjacent
-            # logging.info(j, self.gdf.iloc[i, :]["_neighbors"])
             if str(j) in self.gdf.iloc[i, :]["_neighbors"].split(","):
                 gap = 0
                 self._distances.append(h)
@@ -169,17 +166,15 @@ Additional remarks:
                 s_ = p.LpVariable(f"s_{i}_{j}", cat="Integer")
             if self.mode in (2, 3) and s_dict is None:
                 s = p.LpAffineExpression([(s_, (w + gap))])
-                one_minus_s = p.LpAffineExpression([(s_, -1 * (w + gap))], constant=(w + gap))
+                one_minus_s = p.LpAffineExpression(
+                    [(s_, -1 * (w + gap))], constant=(w + gap)
+                )
                 self.problem += s + one_minus_s <= w + gap
                 self.problem += s + one_minus_s >= w + gap
 
             # Depending on whether x_i - x_j yields a positive or negative result we decide the order
             # in which they are presented in the constraints.
             if geom_dist_x > 0:
-                logging.info(
-                    f"diff x > 0, {self.gdf.at[i, 'NAME']} - {self.gdf.at[j, 'NAME']}, dist x = {geom_dist_x}"
-                    + f", dist y = {geom_dist_y}, width = {w}, gap = {gap}"
-                )
                 if abs(geom_dist_x) > abs(geom_dist_y) and self.mode == 1:
                     # Add constraint 1
                     self.problem += (
@@ -195,10 +190,6 @@ Additional remarks:
                     h >= self._coord_dict[j]["x"] - self._coord_dict[i]["x"] - w
                 )
             else:
-                logging.info(
-                    f"diff x <= 0, {self.gdf.at[i, 'NAME']} - {self.gdf.at[j, 'NAME']}, dist x = {geom_dist_x}"
-                    + f", dist y = {geom_dist_y}, width = {w}, gap = {gap}"
-                )
                 if abs(geom_dist_x) > abs(geom_dist_y) and self.mode == 1:
                     # Add constraint 1
                     self.problem += (
@@ -217,31 +208,33 @@ Additional remarks:
             # Depending on whether y_i - y_j yields a positive or negative result we decide the order
             # in which they are presented in the constraints.
             if geom_dist_y > 0:
-                logging.info(
-                    f"diff y > 0, {self.gdf.at[i, 'NAME']} - {self.gdf.at[j, 'NAME']}, dist x = {geom_dist_x}"
-                    + f", dist y = {geom_dist_y}, width = {w}, gap = {gap}"
-                )
                 if not abs(geom_dist_x) > abs(geom_dist_y) and self.mode == 1:
                     # Add constraint 2
-                    self.problem += self._coord_dict[j]["y"] - self._coord_dict[i]["y"] >= w + gap
+                    self.problem += (
+                        self._coord_dict[j]["y"] - self._coord_dict[i]["y"] >= w + gap
+                    )
                 elif self.mode != 1:
                     # Add constraint 2
-                    self.problem += self._coord_dict[j]["y"] - self._coord_dict[i]["y"] >= one_minus_s
+                    self.problem += (
+                        self._coord_dict[j]["y"] - self._coord_dict[i]["y"]
+                        >= one_minus_s
+                    )
                 # Add constraint 4
                 self.problem += (
                     v >= self._coord_dict[j]["y"] - self._coord_dict[i]["y"] - w
                 )
             else:
-                logging.info(
-                    f"diff y <= 0, {self.gdf.at[i, 'NAME']} - {self.gdf.at[j, 'NAME']}, dist x = {geom_dist_x}"
-                    + f", dist y = {geom_dist_y}, width = {w}, gap = {gap}"
-                )
                 if not abs(geom_dist_x) > abs(geom_dist_y) and self.mode == 1:
                     # Add constraint 2
-                    self.problem += self._coord_dict[i]["y"] - self._coord_dict[j]["y"] >= w + gap
+                    self.problem += (
+                        self._coord_dict[i]["y"] - self._coord_dict[j]["y"] >= w + gap
+                    )
                 elif self.mode != 1:
                     # Add constraint 2
-                    self.problem += self._coord_dict[i]["y"] - self._coord_dict[j]["y"] >= one_minus_s
+                    self.problem += (
+                        self._coord_dict[i]["y"] - self._coord_dict[j]["y"]
+                        >= one_minus_s
+                    )
                 # Add constraint 4
                 self.problem += (
                     v >= self._coord_dict[i]["y"] - self._coord_dict[j]["y"] - w
@@ -256,7 +249,7 @@ Additional remarks:
         """
 
         self.problem.solve(
-            p.GLPK_CMD(msg=True, options=["--tmlim", f"{self.time_limit}"])
+            p.GLPK_CMD(msg=self.solve_msg, options=["--tmlim", f"{self.time_limit}"])
         )
 
         s_dict = {}

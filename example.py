@@ -3,7 +3,8 @@ import os
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
-from cartogrammetry.create import CircleCartogram, BlockCartogram
+from cartogrammetry.create import CircleCartogram, SquareCartogram
+
 
 def main():
     """US state population example
@@ -31,8 +32,8 @@ def main():
         gdf=us_states,
         size_column="pop_2019",
         mode=2,
-        time_limit=480, # The total amount of seconds the model is allowed to run. Useful for working with mode 3.
-        lower_bound_mult=1
+        time_limit=480,  # The total amount of seconds the model is allowed to run. Useful for working with mode 3.
+        lower_bound_mult=1,
     )
 
     # Calculate the cartogram geometries.
@@ -40,12 +41,8 @@ def main():
 
     # Plot both the original map and the cartogram side by side.
     f, ax = plt.subplots(1, 2, figsize=(10, 25))
-    cg._solver.gdf.plot(
-        column="pop_2019",
-        ax=ax[0], alpha=0.8)
-    cg.gdf.plot(
-        column="pop_2019",
-        ax=ax[1], alpha=0.8)
+    cg._solver.gdf.plot(column="pop_2019", ax=ax[0], alpha=0.8)
+    cg.gdf.plot(column="pop_2019", ax=ax[1], alpha=0.8)
     ax[0].axis("off")
     ax[1].axis("off")
     cg._solver.gdf.apply(

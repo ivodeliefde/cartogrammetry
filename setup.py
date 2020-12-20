@@ -20,8 +20,7 @@ setuptools.setup(
         "pulp",
         "scikit-learn",
         "fiona",
-        "pyproj"
-        "shapely",
+        "pyproj" "shapely",
         "geopandas",
         "matplotlib",
         "tqdm",

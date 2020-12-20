@@ -2,19 +2,15 @@
 
 """Module for creating block or circle style cartograms.
 """
-import sys
-import os
-from pathlib import Path
+
 import numpy as np
-import pandas as pd
 import geopandas as gpd
-from shapely.geometry import Polygon
 from shapely.affinity import translate
-import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from tqdm.auto import tqdm
 
 from .solve import Solver
+
 
 class Cartogram:
     """Class to create a cartogram from a geopandas geodataframe.
@@ -76,7 +72,6 @@ class Cartogram:
     def solve_cartogram(self) -> None:
         """Method for running all the steps required to make a cartogram.
 
-        :return: None
         """
 
         # Apply the offset.
@@ -109,7 +104,17 @@ class Cartogram:
 
         # Take a lower and upper bound based on the areas and apply the multiplier
         self._lower_bound = self._lower_bound * self.lower_bound_mult
-        self._upper_bound = np.sqrt(self._lower_bound * (self.gdf.loc[:, self.size_column].max() / self.gdf.loc[:, self.size_column].min()) * self.upper_bound_mult) / 2
+        self._upper_bound = (
+            np.sqrt(
+                self._lower_bound
+                * (
+                    self.gdf.loc[:, self.size_column].max()
+                    / self.gdf.loc[:, self.size_column].min()
+                )
+                * self.upper_bound_mult
+            )
+            / 2
+        )
 
         # Create a scaler and calculate a size value based on the size_column
         self._scaler = MinMaxScaler(
@@ -117,10 +122,8 @@ class Cartogram:
         )
 
         if self.size_column in self.gdf.columns:
-            self.gdf["geom_size"] = (
-                self._scaler.fit_transform(
-                    self.gdf.loc[:, self.size_column].values.reshape(-1, 1)
-                )
+            self.gdf["geom_size"] = self._scaler.fit_transform(
+                self.gdf.loc[:, self.size_column].values.reshape(-1, 1)
             )
         else:
             # TODO! check if geometry type is polygon
@@ -147,4 +150,3 @@ class Cartogram:
             self.gdf.at[index, "_n_neighbors"] = len(neighbors)
 
         self.gdf["_n_neighbors"].fillna(0, inplace=True)
-
