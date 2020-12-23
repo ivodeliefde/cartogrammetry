@@ -3,5 +3,5 @@
 """Init script
 """
 
-from .create import Cartogram, create_block
+from .create import Cartogram, create_square, CircleCartogram, SquareCartogram
 from .solve import Solver

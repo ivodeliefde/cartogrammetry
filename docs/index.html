@@ -242,22 +242,10 @@
 <dt id="cartogrammetry.solve.Solver">
 <em class="property">class </em><code class="sig-prename descclassname">cartogrammetry.solve.</code><code class="sig-name descname">Solver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gdf</span><span class="p">:</span> <span class="n">geopandas.geodataframe.GeoDataFrame</span></em>, <em class="sig-param"><span class="n">gap_size</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">time_limit</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">300</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">solve_msg</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cartogrammetry.solve.Solver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear Programming Solver for creating cartograms.</p>
-<p>This class solves the location of geometries in a GeoDataFrame, in order to create a cartogram. The methodology is derived from the article ‘Computing stable Demers cartograms’ by Nickel et al. (2019).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf</strong> – Geodataframe to optimize.</p></li>
-<li><p><strong>gap_size</strong> – The minimum length in meters between non-adjacent geometries.</p></li>
-<li><p><strong>time_limit</strong> – The maximum time allowed to find a solution. If exceeded the best solution at that time is returned.</p></li>
-<li><p><strong>mode</strong> – Mode 1, 2 or 3. Corresponds to 1: quick method but suboptimal, 2: quick, optimal, but with overlapping geometries, 3: optimal, no overlapping geometries, but slow.</p></li>
-<li><p><strong>solve_msg</strong> – Boolean value for displaying solver logging.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="cartogrammetry.solve.Solver.add_adjacent_variables_constraints">
-<code class="sig-name descname">add_adjacent_variables_constraints</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.solve.Solver.add_adjacent_variables_constraints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to create LP variables for each pair of adjacent geometries.</p>
+<blockquote>
+<div><p>This class solves the location of geometries in a GeoDataFrame, in order to create a cartogram. The methodology is derived from the article ‘Computing stable Demers cartograms’ by Nickel et al. (2019).</p>
+</div></blockquote>
+<p><strong>Methodology</strong></p>
 <p>For each combination of neighboring geometries we create 2 additional variables:</p>
 <blockquote>
 <div><ul class="simple">
@@ -294,12 +282,48 @@
 </li>
 </ol>
 </div></blockquote>
-<p>Additional remarks:</p>
+<p>There are 4 modes implemented:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>For any combination of p_i and p_j either constraint 1 or 2 must apply. Which one is used depends on which axis has the greatest range. E.g. if x_j - x_i &gt; y_j - y_i, then constraints 1 applies and p_i and p_j are considered horizontally adjacent.</p></li>
+<li><p>Mode 1: For any combination of p_i and p_j either constraint 1 or 2 must apply. Which one is used depends on which axis has the greatest range. E.g. if x_j - x_i &gt; y_j - y_i, then constraints 1 applies and p_i and p_j are considered horizontally adjacent.</p></li>
+<li><p>Mode 2: A variable S is created with a value between 0 and 1 to determine the most optimal horizontal or vertical position for adjacent geometries. The result is allowed to have overlapping geometries.</p></li>
+<li><p>Mode 3: Similar to mode 2, but user an integer variable (MIP) instead of a float. This reduces overlap but takes more time to solve.</p></li>
+<li><p>Mode 4: Similar to mode 2, but after the initial solved result the variable S is rounded and added to the problem as a constant.</p></li>
 </ul>
+<dl class="field-list simple">
+<dt class="field-odd">param gdf</dt>
+<dd class="field-odd"><p>Geodataframe to optimize.</p>
+</dd>
+<dt class="field-even">param gap_size</dt>
+<dd class="field-even"><p>The minimum length in meters between non-adjacent geometries.</p>
+</dd>
+<dt class="field-odd">param time_limit</dt>
+<dd class="field-odd"><p>The maximum time allowed to find a solution. If exceeded the best solution at that time is returned.</p>
+</dd>
+<dt class="field-even">param mode</dt>
+<dd class="field-even"><p>Mode 1, 2 or 3. Corresponds to 1: quick method but suboptimal, 2: quick, optimal, but with overlapping geometries, 3: optimal, no overlapping geometries, but slow.</p>
+</dd>
+<dt class="field-odd">param solve_msg</dt>
+<dd class="field-odd"><p>Boolean value for displaying solver logging.</p>
+</dd>
+</dl>
 </div></blockquote>
+<dl class="py method">
+<dt id="cartogrammetry.solve.Solver.add_adjacent_variables_constraints_m1">
+<code class="sig-name descname">add_adjacent_variables_constraints_m1</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.solve.Solver.add_adjacent_variables_constraints_m1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to create LP variables for each pair of adjacent geometries (using mode 1).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cartogrammetry.solve.Solver.add_adjacent_variables_constraints_m23">
+<code class="sig-name descname">add_adjacent_variables_constraints_m23</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mip</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.solve.Solver.add_adjacent_variables_constraints_m23" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to create LP variables for each pair of adjacent geometries (using mode 2 or mode 3).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cartogrammetry.solve.Solver.add_adjacent_variables_constraints_m4">
+<code class="sig-name descname">add_adjacent_variables_constraints_m4</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.solve.Solver.add_adjacent_variables_constraints_m4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to create LP variables for each pair of adjacent geometries (using mode 4).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -323,7 +347,7 @@
 
 <dl class="py method">
 <dt id="cartogrammetry.solve.Solver.solve">
-<code class="sig-name descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.solve.Solver.solve" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">solve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">create_s_dict</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#cartogrammetry.solve.Solver.solve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to solve for the optimal location of geometries given an input Geodataframe with a size column.</p>
 </dd></dl>
 
