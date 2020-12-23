@@ -8,3 +8,5 @@ A Python package for creating block or circle style cartograms.
 ## Documentation
 
 Check out the documentation [here](https://ivodeliefde.github.io/cartogrammetry/).
+
+Check out the latest release on PyPi [here](https://pypi.org/project/cartogrammetry/).
