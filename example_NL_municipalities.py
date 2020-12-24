@@ -3,7 +3,9 @@ import os
 import logging
 import geopandas as gpd
 import matplotlib.pyplot as plt
+
 from cartogrammetry.create import CircleCartogram, SquareCartogram
+from cartogrammetry.plot import Map
 
 
 def main():
@@ -15,14 +17,16 @@ def main():
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(message)s",
-        stream=sys.stdout
+        stream=sys.stdout,
     )
 
     # Load the sample dataset: the NL municipalities.
     # (data from https://www.cbs.nl/nl-nl/dossier/nederland-regionaal/geografische-data)
-    nl_muni_path = os.path.join(os.getcwd(), "sample_data", "gemeente_2020_v1_subset.shp")
+    nl_muni_path = os.path.join(
+        os.getcwd(), "sample_data", "gemeente_2020_v1_subset.shp"
+    )
     nl_muni = gpd.read_file(nl_muni_path)
-    
+
     # Inspect the data
     print(nl_muni.info(""))
 
@@ -49,18 +53,14 @@ def main():
     square2_cg.calculate()
 
     # Plot both the original map and the cartogram side by side.
-    f, ax = plt.subplots(2, 2, figsize=(20, 25))
-    nl_muni.plot(column="GM_NAAM", ax=ax[0][0], alpha=0.8)
-    circle_cg.gdf.plot(column="GM_NAAM", ax=ax[0][1], alpha=0.8)
-    square_cg.gdf.plot(column="GM_NAAM", ax=ax[1][0], alpha=0.8)
-    square2_cg.gdf.plot(column="GM_NAAM", ax=ax[1][1], alpha=0.8)
-
-    # Switch off the axis and remove the legends
-    ax[0][0].axis("off")
-    ax[0][1].axis("off")
-    ax[1][0].axis("off")
-    ax[1][1].axis("off")
-
+    gdfs = [nl_muni, circle_cg.gdf, square_cg.gdf, square2_cg.gdf]
+    m = Map(
+        gdfs=gdfs,
+        title="Municipalities in the Netherlands",
+        column="GM_NAAM",
+        labels="GM_NAAM",
+    )
+    m.plot()
     plt.show()
 
 

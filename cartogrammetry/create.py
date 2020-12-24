@@ -27,22 +27,23 @@ class CircleCartogram(Cartogram):
     """Extends the Cartogram class to create a cartogram where every geometry is represented as a circle.
 
     """
+
     def calculate(self) -> None:
         """
 
         """
         logging.debug("Method calculate from CircleCartogram called")
         self.solve_cartogram()
-        self.gdf.geometry = self.gdf.geometry.buffer(
-            self.gdf["geom_size"]
-        )
+        self.gdf.geometry = self.gdf.geometry.buffer(self.gdf["geom_size"])
         self.gdf.to_crs(self.crs, inplace=True)
         logging.debug("Finished method calculate")
+
 
 class SquareCartogram(Cartogram):
     """Extends the Cartogram class to create a cartogram where every geometry is represented as a square.
 
     """
+
     def calculate(self) -> None:
         """
 
