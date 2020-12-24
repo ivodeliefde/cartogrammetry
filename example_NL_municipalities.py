@@ -57,8 +57,8 @@ def main():
     m = Map(
         gdfs=gdfs,
         title="Municipalities in the Netherlands",
-        column="pop_2019",
-        labels="STUSPS",
+        column="GM_NAAM",
+        labels="GM_NAAM",
     )
     m.plot()
     plt.show()
