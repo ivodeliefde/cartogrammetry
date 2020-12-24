@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setuptools.setup(
     name="cartogrammetry",
     packages=setuptools.find_packages(),
-    version="0.0.3",
+    version="0.0.4",
     author="Ivo de Liefde",
     author_email="ivodeliefde@gmail.com",
     license="MIT",
@@ -18,12 +18,12 @@ setuptools.setup(
         "numpy",
         "pandas",
         "pulp",
-        "scikit-learn",
         "fiona",
         "pyproj" "shapely",
         "geopandas",
         "matplotlib",
         "tqdm",
+        "requests"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",

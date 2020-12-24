@@ -9,6 +9,7 @@ for name in logging.root.manager.loggerDict:
     logging.getLogger(name).setLevel(logging.ERROR)
 
 from cartogrammetry.create import CircleCartogram, SquareCartogram
+from cartogrammetry.plot import Map
 
 
 def main():
@@ -18,9 +19,9 @@ def main():
 
     # Log messages to stdout
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format="%(asctime)s [%(levelname)s] %(message)s",
-        stream=sys.stdout
+        stream=sys.stdout,
     )
 
     # Load the sample dataset: the US states and their corresponding population number.
@@ -65,56 +66,15 @@ def main():
     square2_cg.calculate()
 
     # Plot both the original map and the cartogram side by side.
-    f, ax = plt.subplots(2, 2, figsize=(20, 25))
-    us_states.plot(column="pop_2019", ax=ax[0][0], alpha=0.8)
-    circle_cg.gdf.plot(column="pop_2019", ax=ax[0][1], alpha=0.8)
-    square_cg.gdf.plot(column="pop_2019", ax=ax[1][0], alpha=0.8)
-    square2_cg.gdf.plot(column="pop_2019", ax=ax[1][1], alpha=0.8)
-    ax[0][0].axis("off")
-    ax[0][1].axis("off")
-    ax[1][0].axis("off")
-    ax[1][1].axis("off")
-    circle_cg.gdf.apply(
-        lambda x: ax[0][1].annotate(
-            text=x.STUSPS,
-            xy=x.geometry.centroid.coords[0],
-            ha="center",
-            va="center",
-            color="#B2B2B2",
-        ),
-        axis=1,
+    gdfs = [us_states, circle_cg.gdf, square_cg.gdf, square2_cg.gdf]
+    m = Map(
+        gdfs=gdfs,
+        title="Population per US State in 2019",
+        column="pop_2019",
+        labels="STUSPS",
     )
-    square_cg.gdf.apply(
-        lambda x: ax[1][0].annotate(
-            text=x.STUSPS,
-            xy=x.geometry.centroid.coords[0],
-            ha="center",
-            va="center",
-            color="#B2B2B2",
-        ),
-        axis=1,
-    )
-    square2_cg.gdf.apply(
-        lambda x: ax[1][1].annotate(
-            text=x.STUSPS,
-            xy=x.geometry.centroid.coords[0],
-            ha="center",
-            va="center",
-            color="#B2B2B2",
-        ),
-        axis=1,
-    )
-    us_states.apply(
-        lambda x: ax[0][0].annotate(
-            text=x.STUSPS,
-            xy=x.geometry.centroid.coords[0],
-            ha="center",
-            va="center",
-            color="#B2B2B2",
-        ),
-        axis=1,
-    )
-    ax[0][0].set_xlim(-150, -60)
+    m.ax[0][0].set_xlim(-150, -60)
+    m.plot()
     plt.show()
 
 

@@ -10,6 +10,7 @@ from shapely.affinity import translate
 from tqdm.auto import tqdm
 
 from .solve import Solver
+from .plot import Map
 
 
 class Cartogram:
@@ -94,17 +95,21 @@ class Cartogram:
 
         # self.gdf.geometry = self.undo_offset(gdf.geometry)
 
-
     def calculate_size(self) -> None:
         """Calculate the size for each geometry based on a numeric column.
 
         """
         logging.debug("Method calculate_size called")
         # Take a lower and upper bound based on the areas and apply the multiplier
-        lower_bound = np.sqrt(self.gdf.geometry.area.median())/2
+        lower_bound = np.sqrt(self.gdf.geometry.area.median()) / 2
 
         if self.size_column in self.gdf.columns:
-            self.gdf["geom_size"] = np.sqrt(self.gdf.loc[:, self.size_column]) / 2 / self.gdf.loc[:, self.size_column].median() * lower_bound
+            self.gdf["geom_size"] = (
+                np.sqrt(self.gdf.loc[:, self.size_column])
+                / 2
+                / self.gdf.loc[:, self.size_column].median()
+                * lower_bound
+            )
         else:
             # TODO! check if geometry type is polygon
             # If the size_column is None, calculate size from area
@@ -128,9 +133,10 @@ class Cartogram:
                 if n == index:
                     continue
                 # Calculate for each neighbor the percentage of overlap with respect to the full perimeter.
-                length = shape(mapping(row["geometry"].intersection(self.gdf.at[n, "geometry"]))).length
+                length = shape(
+                    mapping(row["geometry"].intersection(self.gdf.at[n, "geometry"]))
+                ).length
                 neighbors_perimeter.append(round(length / perimeter, 2))
-
 
             # Write neighbor numbers to gdf
             self.gdf.at[index, "_neighbors"] = ",".join(
@@ -139,7 +145,9 @@ class Cartogram:
             self.gdf.at[index, "_neighbors_perimeter"] = ",".join(
                 [str(p) for p in neighbors_perimeter]
             )
-            self.gdf.at[index, "_n_neighbors"] = len(neighbors) - 1 # subtract 1 because a feature is not counted as its own neighbor.
+            self.gdf.at[index, "_n_neighbors"] = (
+                len(neighbors) - 1
+            )  # subtract 1 because a feature is not counted as its own neighbor.
             # logging.debug(f"{self.gdf.at[index, 'NAME']} has {self.gdf.at[index, '_n_neighbors']} neighbors: {','.join([self.gdf.at[n, 'NAME'] for n in neighbors if n != index])} with perimeters: {self.gdf.at[index, '_neighbors_perimeter']}")
 
         self.gdf["_n_neighbors"].fillna(0, inplace=True)

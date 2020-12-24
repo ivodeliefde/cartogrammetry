@@ -2,6 +2,7 @@ import unittest
 import pandas as pd
 import geopandas as gpd
 from shapely import wkt
+
 # import matplotlib.pyplot as plt
 
 from cartogrammetry.solve import Solver
@@ -38,9 +39,11 @@ class SolverTestCase(unittest.TestCase):
             for n in s.gdf.at[i, "_neighbors"].split(","):
                 dx = abs(s.gdf.at[i, "geometry"].x - s.gdf.at[int(n), "geometry"].x)
                 dy = abs(s.gdf.at[i, "geometry"].y - s.gdf.at[int(n), "geometry"].y)
-                self.assertTrue(s.gdf.loc[[i, int(n)], "geom_size"].sum() == dx or
-                                s.gdf.loc[[i, int(n)], "geom_size"].sum() == dy,
-                                f"Solver returns incorrect distance between features {i} and {n}.")
+                self.assertTrue(
+                    s.gdf.loc[[i, int(n)], "geom_size"].sum() == dx
+                    or s.gdf.loc[[i, int(n)], "geom_size"].sum() == dy,
+                    f"Solver returns incorrect distance between features {i} and {n}.",
+                )
 
     def test_mode_two_returns_correct_distances(self):
         s = Solver(gdf=self.gdf, gap_size=0.5, time_limit=300, mode=2, solve_msg=False)
@@ -49,9 +52,11 @@ class SolverTestCase(unittest.TestCase):
             for n in s.gdf.at[i, "_neighbors"].split(","):
                 dist = s.gdf.at[i, "geometry"].distance(s.gdf.at[int(n), "geometry"])
                 size = s.gdf.loc[[i, int(n)], "geom_size"].sum()
-                self.assertGreaterEqual(dist,
-                                        size,
-                                        f"Solver returns incorrect distance between features {i} and {n}.")
+                self.assertGreaterEqual(
+                    dist,
+                    size,
+                    f"Solver returns incorrect distance between features {i} and {n}.",
+                )
 
     def test_mode_three_returns_correct_distances(self):
         s = Solver(gdf=self.gdf, gap_size=0.5, time_limit=300, mode=3, solve_msg=False)
@@ -60,9 +65,12 @@ class SolverTestCase(unittest.TestCase):
             for n in s.gdf.at[i, "_neighbors"].split(","):
                 dx = abs(s.gdf.at[i, "geometry"].x - s.gdf.at[int(n), "geometry"].x)
                 dy = abs(s.gdf.at[i, "geometry"].y - s.gdf.at[int(n), "geometry"].y)
-                self.assertTrue(s.gdf.loc[[i, int(n)], "geom_size"].sum() == dx or
-                                s.gdf.loc[[i, int(n)], "geom_size"].sum() == dy,
-                                f"Solver returns incorrect distance between features {i} and {n}.")
+                self.assertTrue(
+                    s.gdf.loc[[i, int(n)], "geom_size"].sum() == dx
+                    or s.gdf.loc[[i, int(n)], "geom_size"].sum() == dy,
+                    f"Solver returns incorrect distance between features {i} and {n}.",
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

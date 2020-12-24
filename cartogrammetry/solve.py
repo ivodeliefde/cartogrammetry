@@ -64,7 +64,7 @@ There are 4 modes implemented:
     def __init__(
         self,
         gdf: gpd.GeoDataFrame,
-        gap_size: float = 0.,
+        gap_size: float = 0.0,
         time_limit: int = 300,
         mode: int = 1,
         solve_msg: bool = True,
@@ -136,8 +136,12 @@ For each geometry in the GeoDataFrame we create 2 variables:
 
             if original_location:
                 # Add to the objective to also minimize the distance to the original location.
-                dist_original_x = (self._coord_dict[i]["x"] - self.gdf.at[i, "geometry"].x) / self.gdf.loc[:, "geometry"].x.min()
-                dist_original_y = (self._coord_dict[i]["y"] - self.gdf.at[i, "geometry"].y) / self.gdf.loc[:, "geometry"].y.min()
+                dist_original_x = (
+                    self._coord_dict[i]["x"] - self.gdf.at[i, "geometry"].x
+                ) / self.gdf.loc[:, "geometry"].x.min()
+                dist_original_y = (
+                    self._coord_dict[i]["y"] - self.gdf.at[i, "geometry"].y
+                ) / self.gdf.loc[:, "geometry"].y.min()
 
                 # self.problem += dist_original_x >= 0
                 # self.problem += dist_original_y >= 0
@@ -196,21 +200,21 @@ For each geometry in the GeoDataFrame we create 2 variables:
                 if abs(geom_dist_x) > abs(geom_dist_y):
                     # Add constraint 1
                     self.problem += (
-                            self._coord_dict[j]["x"] - self._coord_dict[i]["x"] >= w + gap
+                        self._coord_dict[j]["x"] - self._coord_dict[i]["x"] >= w + gap
                     )
                 # Add constraint 3
                 self.problem += (
-                        h >= self._coord_dict[j]["x"] - self._coord_dict[i]["x"] - w
+                    h >= self._coord_dict[j]["x"] - self._coord_dict[i]["x"] - w
                 )
             else:
                 if abs(geom_dist_x) > abs(geom_dist_y):
                     # Add constraint 1
                     self.problem += (
-                            self._coord_dict[i]["x"] - self._coord_dict[j]["x"] >= w + gap
+                        self._coord_dict[i]["x"] - self._coord_dict[j]["x"] >= w + gap
                     )
                 # Add constraint 3
                 self.problem += (
-                        h >= self._coord_dict[i]["x"] - self._coord_dict[j]["x"] - w
+                    h >= self._coord_dict[i]["x"] - self._coord_dict[j]["x"] - w
                 )
 
             # Depending on whether y_i - y_j yields a positive or negative result we decide the order
@@ -219,21 +223,21 @@ For each geometry in the GeoDataFrame we create 2 variables:
                 if not abs(geom_dist_x) > abs(geom_dist_y):
                     # Add constraint 2
                     self.problem += (
-                            self._coord_dict[j]["y"] - self._coord_dict[i]["y"] >= w + gap
+                        self._coord_dict[j]["y"] - self._coord_dict[i]["y"] >= w + gap
                     )
                 # Add constraint 4
                 self.problem += (
-                        v >= self._coord_dict[j]["y"] - self._coord_dict[i]["y"] - w
+                    v >= self._coord_dict[j]["y"] - self._coord_dict[i]["y"] - w
                 )
             else:
                 if not abs(geom_dist_x) > abs(geom_dist_y):
                     # Add constraint 2
                     self.problem += (
-                            self._coord_dict[i]["y"] - self._coord_dict[j]["y"] >= w + gap
+                        self._coord_dict[i]["y"] - self._coord_dict[j]["y"] >= w + gap
                     )
                 # Add constraint 4
                 self.problem += (
-                        v >= self._coord_dict[i]["y"] - self._coord_dict[j]["y"] - w
+                    v >= self._coord_dict[i]["y"] - self._coord_dict[j]["y"] - w
                 )
 
             # Define the objective
@@ -281,9 +285,7 @@ For each geometry in the GeoDataFrame we create 2 variables:
                 s_ = p.LpVariable(f"s_{i}_{j}", cat="Integer")
             else:
                 s_ = p.LpVariable(f"s_{i}_{j}")
-            s = p.LpAffineExpression(
-                [(s_, (w + gap))]
-            )
+            s = p.LpAffineExpression([(s_, (w + gap))])
             one_minus_s = p.LpAffineExpression(
                 [(s_, -1 * (w + gap))], constant=(w + gap)
             )
@@ -300,23 +302,19 @@ For each geometry in the GeoDataFrame we create 2 variables:
             # in which they are presented in the constraints.
             if geom_dist_x > 0:
                 # Add constraint 1
-                self.problem += (
-                        self._coord_dict[j]["x"] - self._coord_dict[i]["x"] >= s
-                )
+                self.problem += self._coord_dict[j]["x"] - self._coord_dict[i]["x"] >= s
 
                 # Add constraint 3
                 self.problem += (
-                        h >= self._coord_dict[j]["x"] - self._coord_dict[i]["x"] - w
+                    h >= self._coord_dict[j]["x"] - self._coord_dict[i]["x"] - w
                 )
             else:
                 # Add constraint 1
-                self.problem += (
-                        self._coord_dict[i]["x"] - self._coord_dict[j]["x"] >= s
-                )
+                self.problem += self._coord_dict[i]["x"] - self._coord_dict[j]["x"] >= s
 
                 # Add constraint 3
                 self.problem += (
-                        h >= self._coord_dict[i]["x"] - self._coord_dict[j]["x"] - w
+                    h >= self._coord_dict[i]["x"] - self._coord_dict[j]["x"] - w
                 )
 
             # Depending on whether y_i - y_j yields a positive or negative result we decide the order
@@ -324,20 +322,20 @@ For each geometry in the GeoDataFrame we create 2 variables:
             if geom_dist_y > 0:
                 # Add constraint 2
                 self.problem += (
-                        self._coord_dict[j]["y"] - self._coord_dict[i]["y"] >= one_minus_s
+                    self._coord_dict[j]["y"] - self._coord_dict[i]["y"] >= one_minus_s
                 )
                 # Add constraint 4
                 self.problem += (
-                        v >= self._coord_dict[j]["y"] - self._coord_dict[i]["y"] - w
+                    v >= self._coord_dict[j]["y"] - self._coord_dict[i]["y"] - w
                 )
             else:
                 # Add constraint 2
                 self.problem += (
-                        self._coord_dict[i]["y"] - self._coord_dict[j]["y"] >= one_minus_s
+                    self._coord_dict[i]["y"] - self._coord_dict[j]["y"] >= one_minus_s
                 )
                 # Add constraint 4
                 self.problem += (
-                        v >= self._coord_dict[i]["y"] - self._coord_dict[j]["y"] - w
+                    v >= self._coord_dict[i]["y"] - self._coord_dict[j]["y"] - w
                 )
 
             # Define the objective
@@ -385,7 +383,9 @@ For each geometry in the GeoDataFrame we create 2 variables:
             if s_dict[i][j] and str(j) in self.gdf.iloc[i, :]["_neighbors"].split(","):
                 s = w
                 one_minus_s = 0
-            elif not s_dict[i][j] and str(j) in self.gdf.iloc[i, :]["_neighbors"].split(","):
+            elif not s_dict[i][j] and str(j) in self.gdf.iloc[i, :]["_neighbors"].split(
+                ","
+            ):
                 s = 0
                 one_minus_s = w
             else:
@@ -402,23 +402,23 @@ For each geometry in the GeoDataFrame we create 2 variables:
                 if s > 0:
                     # Add constraint 1
                     self.problem += (
-                            self._coord_dict[j]["x"] - self._coord_dict[i]["x"] >= s
+                        self._coord_dict[j]["x"] - self._coord_dict[i]["x"] >= s
                     )
 
                 # Add constraint 3
                 self.problem += (
-                        h >= self._coord_dict[j]["x"] - self._coord_dict[i]["x"] - w
+                    h >= self._coord_dict[j]["x"] - self._coord_dict[i]["x"] - w
                 )
             else:
                 if s > 0:
                     # Add constraint 1
                     self.problem += (
-                            self._coord_dict[i]["x"] - self._coord_dict[j]["x"] >= s
+                        self._coord_dict[i]["x"] - self._coord_dict[j]["x"] >= s
                     )
 
                 # Add constraint 3
                 self.problem += (
-                        h >= self._coord_dict[i]["x"] - self._coord_dict[j]["x"] - w
+                    h >= self._coord_dict[i]["x"] - self._coord_dict[j]["x"] - w
                 )
 
             # Depending on whether y_i - y_j yields a positive or negative result we decide the order
@@ -427,21 +427,23 @@ For each geometry in the GeoDataFrame we create 2 variables:
                 if one_minus_s > 0:
                     # Add constraint 2
                     self.problem += (
-                            self._coord_dict[j]["y"] - self._coord_dict[i]["y"] >= one_minus_s
+                        self._coord_dict[j]["y"] - self._coord_dict[i]["y"]
+                        >= one_minus_s
                     )
                 # Add constraint 4
                 self.problem += (
-                        v >= self._coord_dict[j]["y"] - self._coord_dict[i]["y"] - w
+                    v >= self._coord_dict[j]["y"] - self._coord_dict[i]["y"] - w
                 )
             else:
                 if one_minus_s > 0:
                     # Add constraint 2
                     self.problem += (
-                            self._coord_dict[i]["y"] - self._coord_dict[j]["y"] >= one_minus_s
+                        self._coord_dict[i]["y"] - self._coord_dict[j]["y"]
+                        >= one_minus_s
                     )
                 # Add constraint 4
                 self.problem += (
-                        v >= self._coord_dict[i]["y"] - self._coord_dict[j]["y"] - w
+                    v >= self._coord_dict[i]["y"] - self._coord_dict[j]["y"] - w
                 )
 
             # Define the objective
